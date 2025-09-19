@@ -43,6 +43,10 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
         const res = await axios.put(`${API_URL}/${editEvent._id}`, eventData);
         onUpdate(res.data);
       } else {
+
+        console.log("Posting to URL:", API_URL);
+console.log("Event data:", eventData);
+
         // POST request
         const res = await axios.post(API_URL, eventData);
         onAdd(res.data);
