@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 // Fallback in case .env variable is missing
-const API_URL =
-  process.env.REACT_APP_API_URL_EVENTS ||
-  "https://jainconnect-backened.onrender.com/api/events";
+const API_URL ="https://jainconnect-backened.onrender.com/api/events";
 
 function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
   const [title, setTitle] = useState("");
@@ -39,6 +37,8 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
 
     try {
       if (editEvent && editEvent._id) {
+        
+        console.log("Event API URL:", API_URL);
         // PUT request
         const res = await axios.put(`${API_URL}/${editEvent._id}`, eventData);
         onUpdate(res.data);

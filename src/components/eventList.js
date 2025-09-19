@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 
-const API_URL =
-  process.env.REACT_APP_API_URL_EVENTS ||
-  "https://jainconnect-backened.onrender.com/api/events";
+const API_URL ="https://jainconnect-backened.onrender.com/api/events";
 
 function EventList({ onEdit, onDelete, events, setEvents }) {
   useEffect(() => {
@@ -12,6 +10,9 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
 
   const fetchEvents = async () => {
     try {
+
+        console.log("Event API URL:", API_URL);
+
       const res = await axios.get(API_URL);
       setEvents(res.data);
     } catch (err) {
