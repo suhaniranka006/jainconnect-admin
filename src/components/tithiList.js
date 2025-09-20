@@ -35,7 +35,6 @@ function TithiList({ tithis, setTithis, onEdit, onDelete }) {
             <th>Tithi</th>
             <th>Date</th>
             <th>Description</th>
-            <th>City</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -45,7 +44,6 @@ function TithiList({ tithis, setTithis, onEdit, onDelete }) {
               <td>{t.tithi}</td>
               <td>{t.date}</td>
               <td>{t.description}</td>
-              <td>{t.city}</td>
               <td>
                 <button onClick={() => onEdit(t)}>Edit</button>
                 <button onClick={() => handleDelete(t._id)}>Delete</button>

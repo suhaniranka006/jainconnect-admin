@@ -7,14 +7,12 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
   const [tithi, setTithi] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
-  const [city, setCity] = useState('');
 
   useEffect(() => {
     if (editTithi) {
       setTithi(editTithi.tithi || '');
       setDate(editTithi.date || '');
       setDescription(editTithi.description || '');
-      setCity(editTithi.city || '');
     } else resetForm();
   }, [editTithi]);
 
@@ -22,12 +20,11 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
     setTithi('');
     setDate('');
     setDescription('');
-    setCity('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const tithiData = { tithi, date, description, city };
+    const tithiData = { tithi, date, description };
 
     try {
       if (editTithi && editTithi._id) {
@@ -46,10 +43,26 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="Tithi" value={tithi} onChange={e => setTithi(e.target.value)} required />
-      <input type="date" placeholder="Date" value={date} onChange={e => setDate(e.target.value)} required />
-      <input type="text" placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
-      <input type="text" placeholder="City" value={city} onChange={e => setCity(e.target.value)} />
+      <input
+        type="text"
+        placeholder="Tithi"
+        value={tithi}
+        onChange={e => setTithi(e.target.value)}
+        required
+      />
+      <input
+        type="date"
+        placeholder="Date"
+        value={date}
+        onChange={e => setDate(e.target.value)}
+        required
+      />
+      <input
+        type="text"
+        placeholder="Description"
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+      />
       <button type="submit">{editTithi ? 'Update' : 'Add'}</button>
       {editTithi && <button type="button" onClick={onCancel}>Cancel</button>}
     </form>
