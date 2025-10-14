@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import api from "./api"; // Aapne yeh bilkul sahi kiya
-
-// API_URL constant ki ab zaroorat nahi hai, use hata dein
+import React, { useState, useEffect } from 'react';
+import api from "./api";
 
 function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
   const [title, setTitle] = useState("");
-  const [city, setCity] = useState("");
+  // 'location' ko waapas 'city' kar dein
+  const [city, setCity] = useState(""); 
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
@@ -13,8 +12,8 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
   useEffect(() => {
     if (editEvent) {
       setTitle(editEvent.title || "");
-      setCity(editEvent.city || "");
-      // Date ko YYYY-MM-DD format me set karein taaki input field me dikh sake
+      // 'editEvent.location' ko waapas 'editEvent.city' kar dein
+      setCity(editEvent.city || ""); 
       setDate(editEvent.date ? new Date(editEvent.date).toISOString().split('T')[0] : "");
       setTime(editEvent.time || "");
       setDescription(editEvent.description || "");
@@ -25,7 +24,8 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
 
   const resetForm = () => {
     setTitle("");
-    setCity("");
+    // 'setLocation' ko waapas 'setCity' kar dein
+    setCity(""); 
     setDate("");
     setTime("");
     setDescription("");
@@ -33,21 +33,20 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const eventData = { title, city, date, time, description };
+    // Yahan 'location' ki jagah waapas 'city' bhejein
+    const eventData = { title, city, date, time, description }; 
 
     try {
       if (editEvent && editEvent._id) {
-        // PUT request: Sirf endpoint '/events/:id' ka istemal karein
         const res = await api.put(`/events/${editEvent._id}`, eventData);
         onUpdate(res.data);
       } else {
-        // POST request: Sirf endpoint '/events' ka istemal karein
         const res = await api.post("/events", eventData);
         onAdd(res.data);
       }
       resetForm();
     } catch (err) {
-      console.error("Error saving event:", err.response?.data || err.message);
+      console.error("DETAILED VALIDATION ERROR:", JSON.stringify(err.response?.data, null, 2));
       const errorMessage = err.response?.data?.message || "Error while saving event.";
       alert(errorMessage);
     }
@@ -56,6 +55,7 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
   return (
     <form onSubmit={handleSubmit}>
       <h3>{editEvent ? "Edit Event" : "Add Event"}</h3>
+
       <input
         type="text"
         placeholder="Title"
@@ -63,6 +63,7 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
         onChange={(e) => setTitle(e.target.value)}
         required
       />
+      {/* Input field ko bhi waapas 'city' ke liye update karein */}
       <input
         type="text"
         placeholder="City"
@@ -89,6 +90,7 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
+
       <button type="submit">{editEvent ? "Update" : "Add"}</button>
       {editEvent && (
         <button type="button" onClick={onCancel}>

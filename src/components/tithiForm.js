@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// TithiForm.js (UPDATED)
 
-const API_URL = "https://jainconnect-backened-2.onrender.com/api/tithis";
+import React, { useState, useEffect } from 'react';
+// Axios ko hata kar apni nayi api service import karein
+import api from './api';
 
 function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
   const [tithi, setTithi] = useState('');
@@ -11,9 +12,12 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
   useEffect(() => {
     if (editTithi) {
       setTithi(editTithi.tithi || '');
-      setDate(editTithi.date || '');
+      // Date ko YYYY-MM-DD format me set karein taaki input field me dikh sake
+      setDate(editTithi.date ? new Date(editTithi.date).toISOString().split('T')[0] : '');
       setDescription(editTithi.description || '');
-    } else resetForm();
+    } else {
+      resetForm();
+    }
   }, [editTithi]);
 
   const resetForm = () => {
@@ -28,21 +32,25 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
 
     try {
       if (editTithi && editTithi._id) {
-        const res = await axios.put(`${API_URL}/${editTithi._id}`, tithiData);
+        // axios.put ko api.put se badal dein
+        const res = await api.put(`/tithis/${editTithi._id}`, tithiData);
         onUpdate(res.data);
       } else {
-        const res = await axios.post(API_URL, tithiData);
+        // axios.post ko api.post se badal dein
+        const res = await api.post('/tithis', tithiData);
         onAdd(res.data);
       }
       resetForm();
     } catch (err) {
       console.error('Error saving tithi:', err.response?.data || err.message);
-      alert('Error saving tithi');
+      const errorMessage = err.response?.data?.message || 'Error saving tithi';
+      alert(errorMessage);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <h3>{editTithi ? 'Edit Tithi' : 'Add Tithi'}</h3>
       <input
         type="text"
         placeholder="Tithi"

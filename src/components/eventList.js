@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import api from "./api"; // Aapne yeh bilkul sahi kiya
-
-// API_URL constant ki ab zaroorat nahi hai, use hata dein
+import api from "./api";
 
 function EventList({ onEdit, onDelete, events, setEvents }) {
   useEffect(() => {
@@ -10,7 +8,6 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
 
   const fetchEvents = async () => {
     try {
-      // Sirf endpoint '/events' ka istemal karein
       const res = await api.get("/events");
       setEvents(res.data);
     } catch (err) {
@@ -21,7 +18,6 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
 
   const handleDelete = async (id) => {
     try {
-      // Sirf endpoint '/events/:id' ka istemal karein
       await api.delete(`/events/${id}`);
       onDelete(id);
     } catch (err) {
@@ -37,7 +33,8 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
         <thead>
           <tr>
             <th>Title</th>
-            <th>City</th>
+            {/* 'location' ko waapas 'City' kar dein */}
+            <th>City</th> 
             <th>Date</th>
             <th>Time</th>
             <th>Description</th>
@@ -48,8 +45,8 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
           {events.map((ev) => (
             <tr key={ev._id}>
               <td>{ev.title}</td>
-              <td>{ev.city}</td>
-              {/* Date ko behtar format me dikhane ke liye */}
+              {/* 'ev.location' ko waapas 'ev.city' kar dein */}
+              <td>{ev.city}</td> 
               <td>{new Date(ev.date).toLocaleDateString()}</td>
               <td>{ev.time}</td>
               <td>{ev.description}</td>

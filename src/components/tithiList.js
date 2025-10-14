@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+// TithiList.js (UPDATED)
 
-const API_URL = "https://jainconnect-backened-2.onrender.com/api/tithis";
+import React, { useEffect } from 'react';
+// Axios ko hata kar apni nayi api service import karein
+import api from './api'; 
 
 function TithiList({ tithis, setTithis, onEdit, onDelete }) {
   useEffect(() => { fetchTithis(); }, []);
 
   const fetchTithis = async () => {
     try {
-      const res = await axios.get(API_URL);
+      // Sirf endpoint '/tithis' ka istemal karein
+      const res = await api.get('/tithis');
       setTithis(res.data);
     } catch (err) {
       console.error('Error fetching tithis:', err.response?.data || err.message);
@@ -18,11 +20,14 @@ function TithiList({ tithis, setTithis, onEdit, onDelete }) {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      // axios.delete ko api.delete se badal dein
+      // Token apne aap headers me chala jayega
+      await api.delete(`/tithis/${id}`);
       onDelete(id);
     } catch (err) {
       console.error('Error deleting tithi:', err.response?.data || err.message);
-      alert('Error deleting tithi');
+      const errorMessage = err.response?.data?.message || 'Error deleting tithi';
+      alert(errorMessage);
     }
   };
 
@@ -42,7 +47,8 @@ function TithiList({ tithis, setTithis, onEdit, onDelete }) {
           {tithis.map(t => (
             <tr key={t._id}>
               <td>{t.tithi}</td>
-              <td>{t.date}</td>
+              {/* Date ko behtar format me dikhane ke liye */}
+              <td>{new Date(t.date).toLocaleDateString()}</td>
               <td>{t.description}</td>
               <td>
                 <button onClick={() => onEdit(t)}>Edit</button>

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import MaharajForm from './maharajForm';
+// MaharajList.js (UPDATED)
 
-const API_URL = process.env.REACT_APP_API_URL;
+import React, { useEffect, useState } from 'react';
+// Axios ko hata kar apni nayi api service import karein
+import api from './api'; 
+import MaharajForm from './maharajForm';
 
 function MaharajList() {
   const [maharajs, setMaharajs] = useState([]);
@@ -14,19 +15,25 @@ function MaharajList() {
 
   const fetchMaharajs = async () => {
     try {
-      const res = await axios.get(API_URL);
+      // Sirf endpoint '/maharajs' ka istemal karein
+      const res = await api.get('/maharajs');
       setMaharajs(res.data);
     } catch (err) {
-      console.error('Fetch error:', err);
+      console.error('Fetch error:', err.response?.data || err.message);
+      alert('Error fetching maharajs');
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      // axios.delete ko api.delete se badal dein
+      // Token apne aap headers me chala jayega
+      await api.delete(`/maharajs/${id}`);
       setMaharajs(maharajs.filter(m => m._id !== id));
     } catch (err) {
-      console.error('Delete error:', err);
+      console.error('Delete error:', err.response?.data || err.message);
+      const errorMessage = err.response?.data?.message || 'Error deleting maharaj';
+      alert(errorMessage);
     }
   };
 
@@ -77,7 +84,8 @@ function MaharajList() {
               <td>{m.city}</td>
               <td>{m.title}</td>
               <td>{m.contactInfo}</td>
-              <td>{m.date}</td>
+              {/* Date ko behtar format me dikhane ke liye */}
+              <td>{new Date(m.date).toLocaleDateString()}</td>
               <td>
                 <button onClick={() => handleEditClick(m)}>Edit</button>
                 <button onClick={() => handleDelete(m._id)}>Delete</button>
