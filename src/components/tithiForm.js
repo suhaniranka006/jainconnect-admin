@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = "https://jainconnect-backened.onrender.com/api/tithis";
+const API_URL = "https://jainconnect-backened-2.onrender.com/api/tithis";
 
 function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
   const [tithi, setTithi] = useState('');

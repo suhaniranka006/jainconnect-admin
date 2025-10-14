@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "./api"; // Aapne yeh bilkul sahi kiya
 
-// Fallback in case .env variable is missing
-const API_URL ="https://jainconnect-backened.onrender.com/api/events";
+// API_URL constant ki ab zaroorat nahi hai, use hata dein
 
 function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
   const [title, setTitle] = useState("");
@@ -15,7 +14,8 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
     if (editEvent) {
       setTitle(editEvent.title || "");
       setCity(editEvent.city || "");
-      setDate(editEvent.date || "");
+      // Date ko YYYY-MM-DD format me set karein taaki input field me dikh sake
+      setDate(editEvent.date ? new Date(editEvent.date).toISOString().split('T')[0] : "");
       setTime(editEvent.time || "");
       setDescription(editEvent.description || "");
     } else {
@@ -37,31 +37,25 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
 
     try {
       if (editEvent && editEvent._id) {
-        
-        console.log("Event API URL:", API_URL);
-        // PUT request
-        const res = await axios.put(`${API_URL}/${editEvent._id}`, eventData);
+        // PUT request: Sirf endpoint '/events/:id' ka istemal karein
+        const res = await api.put(`/events/${editEvent._id}`, eventData);
         onUpdate(res.data);
       } else {
-
-        console.log("Posting to URL:", API_URL);
-console.log("Event data:", eventData);
-
-        // POST request
-        const res = await axios.post(API_URL, eventData);
+        // POST request: Sirf endpoint '/events' ka istemal karein
+        const res = await api.post("/events", eventData);
         onAdd(res.data);
       }
       resetForm();
     } catch (err) {
       console.error("Error saving event:", err.response?.data || err.message);
-      alert("Error while saving event.");
+      const errorMessage = err.response?.data?.message || "Error while saving event.";
+      alert(errorMessage);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h3>{editEvent ? "Edit Event" : "Add Event"}</h3>
-
       <input
         type="text"
         placeholder="Title"
@@ -95,7 +89,6 @@ console.log("Event data:", eventData);
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-
       <button type="submit">{editEvent ? "Update" : "Add"}</button>
       {editEvent && (
         <button type="button" onClick={onCancel}>

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = "https://jainconnect-backened.onrender.com/api/tithis";
+const API_URL = "https://jainconnect-backened-2.onrender.com/api/tithis";
 
 function TithiList({ tithis, setTithis, onEdit, onDelete }) {
   useEffect(() => { fetchTithis(); }, []);

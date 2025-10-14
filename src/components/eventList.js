@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import axios from "axios";
+import api from "./api"; // Aapne yeh bilkul sahi kiya
 
-const API_URL ="https://jainconnect-backened.onrender.com/api/events";
+// API_URL constant ki ab zaroorat nahi hai, use hata dein
 
 function EventList({ onEdit, onDelete, events, setEvents }) {
   useEffect(() => {
@@ -10,10 +10,8 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
 
   const fetchEvents = async () => {
     try {
-
-        console.log("Event API URL:", API_URL);
-
-      const res = await axios.get(API_URL);
+      // Sirf endpoint '/events' ka istemal karein
+      const res = await api.get("/events");
       setEvents(res.data);
     } catch (err) {
       console.error("Error fetching events:", err.response?.data || err.message);
@@ -23,7 +21,8 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      // Sirf endpoint '/events/:id' ka istemal karein
+      await api.delete(`/events/${id}`);
       onDelete(id);
     } catch (err) {
       console.error("Error deleting event:", err.response?.data || err.message);
@@ -50,7 +49,8 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
             <tr key={ev._id}>
               <td>{ev.title}</td>
               <td>{ev.city}</td>
-              <td>{ev.date}</td>
+              {/* Date ko behtar format me dikhane ke liye */}
+              <td>{new Date(ev.date).toLocaleDateString()}</td>
               <td>{ev.time}</td>
               <td>{ev.description}</td>
               <td>
