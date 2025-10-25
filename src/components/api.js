@@ -5,7 +5,8 @@ import axios from 'axios';
 // Yeh function aapka hardcoded token return karega
 const getAuthToken = () => {
   // 👇👇👇 YAHAN POSTMAN SE COPY KIYA HUA TOKEN PASTE KAREIN 👇👇👇
-  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGVlMjZiMzlkNWMzOWJiMjdiOWM5YjMiLCJpYXQiOjE3NjA0Mzc5NzcsImV4cCI6MTc2MTA0Mjc3N30.TcaOvdMb9-NCWi1niIBjSr6dQOtt9OKaRCLYmmwiv4I";
+  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGVlMjZiMzlkNWMzOWJiMjdiOWM5YjMiLCJpYXQiOjE3NjEzNjk0OTYsImV4cCI6MTc2MTk3NDI5Nn0.nKLk_t4CnDlIuHgMyomxIMLqGlq5rWNcym4gXtwMXM8";
+  
   return TOKEN;
 };
 
