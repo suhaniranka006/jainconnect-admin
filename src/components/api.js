@@ -5,7 +5,7 @@ import axios from 'axios';
 // Yeh function aapka hardcoded token return karega
 const getAuthToken = () => {
   // 👇👇👇 YAHAN POSTMAN SE COPY KIYA HUA TOKEN PASTE KAREIN 👇👇👇
-  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGVlMjZiMzlkNWMzOWJiMjdiOWM5YjMiLCJpYXQiOjE3NjEzNjk0OTYsImV4cCI6MTc2MTk3NDI5Nn0.nKLk_t4CnDlIuHgMyomxIMLqGlq5rWNcym4gXtwMXM8";
+  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGVlMjZiMzlkNWMzOWJiMjdiOWM5YjMiLCJpYXQiOjE3NjQ3NjgyNDMsImV4cCI6MTc2NTM3MzA0M30.d00sSJ4hg9UlBoch73vKfqdF3-25Arbq_VFc0hsOg-Q";
   
   return TOKEN;
 };
@@ -14,6 +14,7 @@ const getAuthToken = () => {
 const api = axios.create({
   baseURL: 'https://jainconnect-backened-2.onrender.com/api',
 });
+
 
 // Axios Interceptor ka istemal karein
 // Yeh code har request bhejne se pehle chalega
