@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, IconButton, Dialog,
-    DialogTitle, DialogContent, DialogActions, TextField, Grid
+    DialogTitle, DialogContent, DialogActions, TextField, Grid, Avatar
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, PhotoCamera, Person as PersonIcon } from '@mui/icons-material';
 import api from '../components/api';
 import Layout from '../components/Layout';
 
@@ -12,6 +12,8 @@ const MaharajPage = () => {
     const [maharajs, setMaharajs] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentMaharaj, setCurrentMaharaj] = useState({ name: '', city: '', title: '', contactInfo: '', date: '' });
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -42,10 +44,13 @@ const MaharajPage = () => {
         if (maharaj) {
             setCurrentMaharaj(maharaj);
             setIsEdit(true);
+            setImagePreview(maharaj.image || null);
         } else {
             setCurrentMaharaj({ name: '', city: '', title: '', contactInfo: '', date: '' });
             setIsEdit(false);
+            setImagePreview(null);
         }
+        setImageFile(null);
         setOpen(true);
     };
 
@@ -53,17 +58,55 @@ const MaharajPage = () => {
         setOpen(false);
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = async () => {
         try {
+            const formData = new FormData();
+            formData.append('name', currentMaharaj.name);
+            formData.append('city', currentMaharaj.city);
+            formData.append('title', currentMaharaj.title || '');
+            formData.append('contactInfo', currentMaharaj.contactInfo || '');
+            if (currentMaharaj.date) formData.append('date', currentMaharaj.date);
+
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            const config = {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            };
+
             if (isEdit) {
-                await api.put(`/maharajs/${currentMaharaj._id}`, currentMaharaj);
+                const endpoint = imageFile
+                    ? `/maharajs/${currentMaharaj._id}/with-image`
+                    : `/maharajs/${currentMaharaj._id}`;
+
+                if (!imageFile) {
+                    await api.put(`/maharajs/${currentMaharaj._id}`, currentMaharaj);
+                } else {
+                    await api.put(endpoint, formData, config);
+                }
             } else {
-                await api.post('/maharajs', currentMaharaj);
+                const endpoint = imageFile ? '/maharajs/with-image' : '/maharajs';
+
+                if (!imageFile) {
+                    await api.post('/maharajs', currentMaharaj);
+                } else {
+                    await api.post(endpoint, formData, config);
+                }
             }
             fetchMaharajs();
             handleClose();
         } catch (err) {
             console.error(err);
+            alert('Error saving Maharaj');
         }
     };
 
@@ -84,6 +127,7 @@ const MaharajPage = () => {
                 <Table>
                     <TableHead sx={{ bgcolor: 'secondary.light' }}>
                         <TableRow>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Image</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Title</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
@@ -94,6 +138,11 @@ const MaharajPage = () => {
                     <TableBody>
                         {maharajs.map((row) => (
                             <TableRow key={row._id}>
+                                <TableCell>
+                                    <Avatar src={row.image} alt={row.name}>
+                                        {row.name.charAt(0)}
+                                    </Avatar>
+                                </TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.city}</TableCell>
@@ -111,6 +160,19 @@ const MaharajPage = () => {
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
                 <DialogTitle>{isEdit ? 'Edit Maharaj' : 'Add New Maharaj'}</DialogTitle>
                 <DialogContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+                        <Avatar
+                            src={imagePreview}
+                            sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main' }}
+                        >
+                            {!imagePreview && <PersonIcon fontSize="large" />}
+                        </Avatar>
+                        <Button variant="contained" component="label" startIcon={<PhotoCamera />}>
+                            Upload Photo
+                            <input hidden accept="image/*" type="file" onChange={handleFileChange} />
+                        </Button>
+                    </Box>
+
                     <Grid container spacing={2} sx={{ mt: 1 }}>
                         <Grid item xs={12}>
                             <TextField fullWidth label="Name" name="name" value={currentMaharaj.name} onChange={handleChange} />
@@ -123,6 +185,17 @@ const MaharajPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField fullWidth label="Contact Info" name="contactInfo" value={currentMaharaj.contactInfo} onChange={handleChange} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                type="date"
+                                label="Date"
+                                name="date"
+                                value={currentMaharaj.date ? new Date(currentMaharaj.date).toISOString().split('T')[0] : ''}
+                                onChange={handleChange}
+                                InputLabelProps={{ shrink: true }}
+                            />
                         </Grid>
                     </Grid>
                 </DialogContent>
