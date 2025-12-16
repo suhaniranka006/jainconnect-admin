@@ -91,7 +91,8 @@ const MaharajPage = () => {
                 if (!imageFile) {
                     await api.put(`/maharajs/${currentMaharaj._id}`, currentMaharaj);
                 } else {
-                    await api.put(endpoint, formData, config);
+                    // Axios automatically sets Content-Type to multipart/form-data with boundary
+                    await api.put(endpoint, formData);
                 }
             } else {
                 const endpoint = imageFile ? '/maharajs/with-image' : '/maharajs';
@@ -99,7 +100,7 @@ const MaharajPage = () => {
                 if (!imageFile) {
                     await api.post('/maharajs', currentMaharaj);
                 } else {
-                    await api.post(endpoint, formData, config);
+                    await api.post(endpoint, formData);
                 }
             }
             fetchMaharajs();
