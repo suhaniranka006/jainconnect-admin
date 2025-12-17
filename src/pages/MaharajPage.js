@@ -22,7 +22,7 @@ const MaharajPage = () => {
 
     const fetchMaharajs = async () => {
         try {
-            const res = await api.get('/maharajs');
+            const res = await api.get('/maharaj');
             setMaharajs(res.data);
         } catch (err) {
             console.error(err);
@@ -32,7 +32,7 @@ const MaharajPage = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Maharaj?')) {
             try {
-                await api.delete(`/maharajs/${id}`);
+                await api.delete(`/maharaj/${id}`);
                 setMaharajs(maharajs.filter(m => m._id !== id));
             } catch (err) {
                 console.error(err);
@@ -79,26 +79,24 @@ const MaharajPage = () => {
                 formData.append('image', imageFile);
             }
 
-            const config = {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            };
+
 
             if (isEdit) {
                 const endpoint = imageFile
-                    ? `/maharajs/${currentMaharaj._id}/with-image`
-                    : `/maharajs/${currentMaharaj._id}`;
+                    ? `/maharaj/${currentMaharaj._id}/with-image`
+                    : `/maharaj/${currentMaharaj._id}`;
 
                 if (!imageFile) {
-                    await api.put(`/maharajs/${currentMaharaj._id}`, currentMaharaj);
+                    await api.put(`/maharaj/${currentMaharaj._id}`, currentMaharaj);
                 } else {
                     // Axios automatically sets Content-Type to multipart/form-data with boundary
                     await api.put(endpoint, formData);
                 }
             } else {
-                const endpoint = imageFile ? '/maharajs/with-image' : '/maharajs';
+                const endpoint = imageFile ? '/maharaj/with-image' : '/maharaj';
 
                 if (!imageFile) {
-                    await api.post('/maharajs', currentMaharaj);
+                    await api.post('/maharaj', currentMaharaj);
                 } else {
                     await api.post(endpoint, formData);
                 }
