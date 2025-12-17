@@ -10,6 +10,7 @@ import EventsPage from './pages/EventsPage';
 import TithiPage from './pages/TithiPage';
 import BhojanshalaPage from './pages/BhojanshalaPage';
 import TemplePage from './pages/TemplePage';
+import CarpoolPage from './pages/CarpoolPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -70,6 +71,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <TemplePage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/carpools"
+              element={
+                <PrivateRoute>
+                  <CarpoolPage />
                 </PrivateRoute>
               }
             />
