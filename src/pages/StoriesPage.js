@@ -118,6 +118,8 @@ const StoriesPage = () => {
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Image</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Title</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Summary</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Content (Preview)</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Source</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Likes</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
@@ -131,7 +133,9 @@ const StoriesPage = () => {
                                     </Avatar>
                                 </TableCell>
                                 <TableCell>{row.title}</TableCell>
-                                <TableCell>{row.summary}</TableCell>
+                                <TableCell>{row.summary.substring(0, 30)}...</TableCell>
+                                <TableCell>{row.content ? row.content.substring(0, 30) + '...' : ''}</TableCell>
+                                <TableCell>{row.source || '-'}</TableCell>
                                 <TableCell>{row.likes || 0}</TableCell>
                                 <TableCell>
                                     <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>

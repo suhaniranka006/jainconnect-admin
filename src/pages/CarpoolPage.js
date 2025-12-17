@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Delete as DeleteIcon, DirectionsCar as CarIcon } from '@mui/icons-material';
 import Layout from '../components/Layout';
-import axios from 'axios';
+import api from '../components/api';
 
 const CarpoolPage = () => {
     const [rides, setRides] = useState([]);
@@ -24,7 +24,7 @@ const CarpoolPage = () => {
     // Fetch Rides
     const fetchRides = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/carpool/all');
+            const response = await api.get('/carpool/all');
             setRides(response.data);
             setLoading(false);
         } catch (error) {

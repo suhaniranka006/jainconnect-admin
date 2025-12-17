@@ -22,7 +22,7 @@ const BhojanshalaPage = () => {
 
     const fetchBhojanshalas = async () => {
         try {
-            const res = await api.get('/bhojanshalas');
+            const res = await api.get('/bhojanshala');
             setBhojanshalas(res.data);
         } catch (err) {
             console.error(err);
@@ -32,7 +32,7 @@ const BhojanshalaPage = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Bhojanshala?')) {
             try {
-                await api.delete(`/bhojanshalas/${id}`);
+                await api.delete(`/bhojanshala/${id}`);
                 setBhojanshalas(bhojanshalas.filter(e => e._id !== id));
             } catch (err) {
                 console.error(err);
@@ -81,15 +81,12 @@ const BhojanshalaPage = () => {
             }
 
             if (isEdit) {
-                // Note: Image update might require specific backend support if not handled.
-                // Assuming standard JSON update for now if no image, or Multipart if needed.
-                // For simplified flow, we send JSON for edit unless image logic is added to PUT.
-                await api.put(`/bhojanshalas/${current._id}`, current);
+                await api.put(`/bhojanshala/${current._id}`, current);
             } else {
-                const endpoint = imageFile ? '/bhojanshalas/with-image' : '/bhojanshalas';
+                const endpoint = imageFile ? '/bhojanshala/with-image' : '/bhojanshala';
 
                 if (!imageFile) {
-                    await api.post('/bhojanshalas', current);
+                    await api.post('/bhojanshala', current);
                 } else {
                     await api.post(endpoint, formData, {
                         headers: { 'Content-Type': 'multipart/form-data' }
