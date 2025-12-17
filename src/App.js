@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import MaharajPage from './pages/MaharajPage';
 import EventsPage from './pages/EventsPage';
 import TithiPage from './pages/TithiPage';
+import BhojanshalaPage from './pages/BhojanshalaPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -50,6 +51,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <TithiPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/bhojanshalas"
+              element={
+                <PrivateRoute>
+                  <BhojanshalaPage />
                 </PrivateRoute>
               }
             />

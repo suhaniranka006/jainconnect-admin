@@ -18,7 +18,8 @@ import {
     Person as PersonIcon,
     Today as TodayIcon,
     Menu as MenuIcon,
-    Logout as LogoutIcon
+    Logout as LogoutIcon,
+    Restaurant as RestaurantIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -39,6 +40,7 @@ const Layout = ({ children }) => {
         { text: 'Maharaj List', icon: <PersonIcon />, path: '/maharajs' },
         { text: 'Events', icon: <EventIcon />, path: '/events' },
         { text: 'Tithis', icon: <TodayIcon />, path: '/tithis' },
+        { text: 'Bhojanshalas', icon: <RestaurantIcon />, path: '/bhojanshalas' },
     ];
 
     const drawer = (
