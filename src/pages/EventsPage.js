@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, IconButton, Dialog,
-    DialogTitle, DialogContent, DialogActions, TextField, Grid
+    DialogTitle, DialogContent, DialogActions, TextField, Grid, Avatar
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 import api from '../components/api';
@@ -73,7 +73,9 @@ const EventsPage = () => {
             formData.append('title', currentEvent.title);
             formData.append('city', currentEvent.city);
             formData.append('date', currentEvent.date);
+            formData.append('date', currentEvent.date);
             formData.append('time', currentEvent.time);
+            formData.append('contact', currentEvent.contact || '');
             formData.append('description', currentEvent.description);
 
             if (selectedFile) {
@@ -117,10 +119,12 @@ const EventsPage = () => {
                 <Table>
                     <TableHead sx={{ bgcolor: 'secondary.light' }}>
                         <TableRow>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Image</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Title</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Date</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Time</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Contact</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Description</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
@@ -128,10 +132,16 @@ const EventsPage = () => {
                     <TableBody>
                         {events.map((row) => (
                             <TableRow key={row._id}>
+                                <TableCell>
+                                    <Avatar src={row.image} alt={row.title} variant="rounded">
+                                        {row.title.charAt(0)}
+                                    </Avatar>
+                                </TableCell>
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.city}</TableCell>
                                 <TableCell>{new Date(row.date).toLocaleDateString()}</TableCell>
                                 <TableCell>{row.time}</TableCell>
+                                <TableCell>{row.contact}</TableCell>
                                 <TableCell>{row.description}</TableCell>
                                 <TableCell>
                                     <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>
@@ -166,6 +176,9 @@ const EventsPage = () => {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth label="Time" name="time" value={currentEvent.time} onChange={handleChange} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField fullWidth label="Contact Number" name="contact" value={currentEvent.contact} onChange={handleChange} />
                         </Grid>
                         <Grid item xs={12}>
                             <input
