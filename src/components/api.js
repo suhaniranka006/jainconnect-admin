@@ -4,6 +4,7 @@ import axios from 'axios';
 // Create axios instance
 const api = axios.create({
   baseURL: 'https://jainconnect-backened-2.onrender.com/api',
+  timeout: 120000, // 2 minutes timeout
 });
 
 // Axios Interceptor
