@@ -21,7 +21,8 @@ import {
     Logout as LogoutIcon,
     Restaurant as RestaurantIcon,
     AccountBalance as TempleIcon,
-    DirectionsCar as CarIcon
+    DirectionsCar as CarIcon,
+    AutoStories as StoryIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -45,6 +46,7 @@ const Layout = ({ children }) => {
         { text: 'Bhojanshalas', icon: <RestaurantIcon />, path: '/bhojanshalas' },
         { text: 'Temples', icon: <TempleIcon />, path: '/temples' },
         { text: 'Carpooling', icon: <CarIcon />, path: '/carpools' },
+        { text: 'Jain Legacy', icon: <StoryIcon />, path: '/stories' },
     ];
 
     const drawer = (

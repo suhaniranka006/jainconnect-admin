@@ -11,6 +11,7 @@ import TithiPage from './pages/TithiPage';
 import BhojanshalaPage from './pages/BhojanshalaPage';
 import TemplePage from './pages/TemplePage';
 import CarpoolPage from './pages/CarpoolPage';
+import StoriesPage from './pages/StoriesPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -80,6 +81,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <CarpoolPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/stories"
+              element={
+                <PrivateRoute>
+                  <StoriesPage />
                 </PrivateRoute>
               }
             />
