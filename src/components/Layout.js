@@ -19,7 +19,8 @@ import {
     Today as TodayIcon,
     Menu as MenuIcon,
     Logout as LogoutIcon,
-    Restaurant as RestaurantIcon
+    Restaurant as RestaurantIcon,
+    AccountBalance as TempleIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -41,6 +42,7 @@ const Layout = ({ children }) => {
         { text: 'Events', icon: <EventIcon />, path: '/events' },
         { text: 'Tithis', icon: <TodayIcon />, path: '/tithis' },
         { text: 'Bhojanshalas', icon: <RestaurantIcon />, path: '/bhojanshalas' },
+        { text: 'Temples', icon: <TempleIcon />, path: '/temples' },
     ];
 
     const drawer = (

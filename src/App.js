@@ -9,6 +9,7 @@ import MaharajPage from './pages/MaharajPage';
 import EventsPage from './pages/EventsPage';
 import TithiPage from './pages/TithiPage';
 import BhojanshalaPage from './pages/BhojanshalaPage';
+import TemplePage from './pages/TemplePage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -60,6 +61,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <BhojanshalaPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/temples"
+              element={
+                <PrivateRoute>
+                  <TemplePage />
                 </PrivateRoute>
               }
             />
