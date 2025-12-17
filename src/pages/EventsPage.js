@@ -57,14 +57,41 @@ const EventsPage = () => {
 
     const handleClose = () => {
         setOpen(false);
+        setSelectedFile(null);
+    };
+
+    const [selectedFile, setSelectedFile] = useState(null); // State for file
+
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
     };
 
     const handleSubmit = async () => {
         try {
+            // Use FormData for File Upload
+            const formData = new FormData();
+            formData.append('title', currentEvent.title);
+            formData.append('city', currentEvent.city);
+            formData.append('date', currentEvent.date);
+            formData.append('time', currentEvent.time);
+            formData.append('description', currentEvent.description);
+
+            if (selectedFile) {
+                formData.append('image', selectedFile);
+            }
+
             if (isEdit) {
-                await api.put(`/events/${currentEvent._id}`, currentEvent);
+                if (selectedFile) {
+                    await api.put(`/events/upload/${currentEvent._id}`, formData);
+                } else {
+                    await api.put(`/events/${currentEvent._id}`, currentEvent);
+                }
             } else {
-                await api.post('/events', currentEvent);
+                if (selectedFile) {
+                    await api.post('/events/with-image', formData);
+                } else {
+                    await api.post('/events', currentEvent);
+                }
             }
             fetchEvents();
             handleClose();
@@ -139,6 +166,20 @@ const EventsPage = () => {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth label="Time" name="time" value={currentEvent.time} onChange={handleChange} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <input
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                id="raised-button-file"
+                                type="file"
+                                onChange={handleFileChange}
+                            />
+                            <label htmlFor="raised-button-file">
+                                <Button variant="outlined" component="span" fullWidth>
+                                    {selectedFile ? selectedFile.name : "Upload Image"}
+                                </Button>
+                            </label>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
