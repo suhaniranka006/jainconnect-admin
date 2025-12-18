@@ -22,7 +22,8 @@ import {
     Restaurant as RestaurantIcon,
     AccountBalance as TempleIcon,
     DirectionsCar as CarIcon,
-    AutoStories as StoryIcon
+    AutoStories as StoryIcon,
+    Hiking as HikeIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -47,6 +48,7 @@ const Layout = ({ children }) => {
         { text: 'Temples', icon: <TempleIcon />, path: '/temples' },
         { text: 'Carpooling', icon: <CarIcon />, path: '/carpools' },
         { text: 'Jain Legacy', icon: <StoryIcon />, path: '/stories' },
+        { text: 'Tirthyatra Templates', icon: <HikeIcon />, path: '/tirthyatra-templates' },
     ];
 
     const drawer = (

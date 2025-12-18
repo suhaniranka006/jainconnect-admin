@@ -12,6 +12,7 @@ import BhojanshalaPage from './pages/BhojanshalaPage';
 import TemplePage from './pages/TemplePage';
 import CarpoolPage from './pages/CarpoolPage';
 import StoriesPage from './pages/StoriesPage';
+import TirthyatraTemplatesPage from './pages/TirthyatraTemplatesPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -90,6 +91,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <StoriesPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/tirthyatra-templates"
+              element={
+                <PrivateRoute>
+                  <TirthyatraTemplatesPage />
                 </PrivateRoute>
               }
             />
