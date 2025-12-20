@@ -11,7 +11,10 @@ import Layout from '../components/Layout';
 const MaharajPage = () => {
     const [maharajs, setMaharajs] = useState([]);
     const [open, setOpen] = useState(false);
-    const [currentMaharaj, setCurrentMaharaj] = useState({ name: '', city: '', title: '', contactInfo: '', date: '' });
+    const [currentMaharaj, setCurrentMaharaj] = useState({
+        name: '', city: '', title: '', contactInfo: '', date: '',
+        arrivalDate: '', viharDate: '', description: ''
+    });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
@@ -46,7 +49,10 @@ const MaharajPage = () => {
             setIsEdit(true);
             setImagePreview(maharaj.image || null);
         } else {
-            setCurrentMaharaj({ name: '', city: '', title: '', contactInfo: '', date: '' });
+            setCurrentMaharaj({
+                name: '', city: '', title: '', contactInfo: '', date: '',
+                arrivalDate: '', viharDate: '', description: ''
+            });
             setIsEdit(false);
             setImagePreview(null);
         }
@@ -73,7 +79,10 @@ const MaharajPage = () => {
             formData.append('city', currentMaharaj.city);
             formData.append('title', currentMaharaj.title || '');
             formData.append('contactInfo', currentMaharaj.contactInfo || '');
+            formData.append('description', currentMaharaj.description || ''); // New Field
             if (currentMaharaj.date) formData.append('date', currentMaharaj.date);
+            if (currentMaharaj.arrivalDate) formData.append('arrivalDate', currentMaharaj.arrivalDate);
+            if (currentMaharaj.viharDate) formData.append('viharDate', currentMaharaj.viharDate);
 
             if (imageFile) {
                 formData.append('image', imageFile);
@@ -130,7 +139,7 @@ const MaharajPage = () => {
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Title</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Contact</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Dates (Arrival - Vihar)</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -145,7 +154,9 @@ const MaharajPage = () => {
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.city}</TableCell>
-                                <TableCell>{row.contactInfo}</TableCell>
+                                <TableCell>
+                                    {row.arrivalDate ? row.arrivalDate : '?'} - {row.viharDate ? row.viharDate : '?'}
+                                </TableCell>
                                 <TableCell>
                                     <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>
                                     <IconButton color="error" onClick={() => handleDelete(row._id)}><Delete /></IconButton>
@@ -185,15 +196,37 @@ const MaharajPage = () => {
                         <Grid item xs={12}>
                             <TextField fullWidth label="Contact Info" name="contactInfo" value={currentMaharaj.contactInfo} onChange={handleChange} />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <TextField
                                 fullWidth
                                 type="date"
-                                label="Date"
-                                name="date"
-                                value={currentMaharaj.date ? new Date(currentMaharaj.date).toISOString().split('T')[0] : ''}
+                                label="Arrival Date"
+                                name="arrivalDate"
+                                value={currentMaharaj.arrivalDate ? new Date(currentMaharaj.arrivalDate).toISOString().split('T')[0] : ''}
                                 onChange={handleChange}
                                 InputLabelProps={{ shrink: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="date"
+                                label="Vihar Date"
+                                name="viharDate"
+                                value={currentMaharaj.viharDate ? new Date(currentMaharaj.viharDate).toISOString().split('T')[0] : ''}
+                                onChange={handleChange}
+                                InputLabelProps={{ shrink: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                label="Description"
+                                name="description"
+                                value={currentMaharaj.description}
+                                onChange={handleChange}
                             />
                         </Grid>
                     </Grid>

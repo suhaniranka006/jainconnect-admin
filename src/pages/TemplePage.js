@@ -122,6 +122,7 @@ const TemplePage = () => {
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Address</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Contact</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Description</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -137,6 +138,9 @@ const TemplePage = () => {
                                 <TableCell>{row.city}</TableCell>
                                 <TableCell>{row.address}</TableCell>
                                 <TableCell>{row.contact}</TableCell>
+                                <TableCell sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {row.description}
+                                </TableCell>
                                 <TableCell>
                                     <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>
                                     <IconButton color="error" onClick={() => handleDelete(row._id)}><Delete /></IconButton>

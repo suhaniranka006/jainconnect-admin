@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
     const [open, setOpen] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState({ title: '', city: '', date: '', time: '', description: '' });
+    const [currentEvent, setCurrentEvent] = useState({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '' });
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -42,14 +42,13 @@ const EventsPage = () => {
         if (event) {
             setCurrentEvent({
                 ...event,
-                // Ensure date is formatted for input type="date" if needed, 
-                // though we are using text fields here initially similar to Maharaj.
-                // If API returns ISO string, we might want to slice it for date input.
-                date: event.date ? new Date(event.date).toISOString().split('T')[0] : ''
+                startDate: event.startDate || (event.date ? event.date.split('T')[0] : ''),
+                endDate: event.endDate || '',
+                date: event.date || ''
             });
             setIsEdit(true);
         } else {
-            setCurrentEvent({ title: '', city: '', date: '', time: '', description: '' });
+            setCurrentEvent({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '' });
             setIsEdit(false);
         }
         setOpen(true);
@@ -72,8 +71,9 @@ const EventsPage = () => {
             const formData = new FormData();
             formData.append('title', currentEvent.title);
             formData.append('city', currentEvent.city);
-            formData.append('date', currentEvent.date);
-            formData.append('date', currentEvent.date);
+            formData.append('startDate', currentEvent.startDate);
+            formData.append('endDate', currentEvent.endDate);
+            formData.append('date', currentEvent.startDate); // Sort mapping
             formData.append('time', currentEvent.time);
             formData.append('contact', currentEvent.contact || '');
             formData.append('description', currentEvent.description);
@@ -122,7 +122,7 @@ const EventsPage = () => {
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Image</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Title</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Date</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Dates (Start - End)</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Time</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Contact</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Description</TableCell>
@@ -139,7 +139,7 @@ const EventsPage = () => {
                                 </TableCell>
                                 <TableCell>{row.title}</TableCell>
                                 <TableCell>{row.city}</TableCell>
-                                <TableCell>{new Date(row.date).toLocaleDateString()}</TableCell>
+                                <TableCell>{row.startDate} {row.endDate ? ' - ' + row.endDate : ''}</TableCell>
                                 <TableCell>{row.time}</TableCell>
                                 <TableCell>{row.contact}</TableCell>
                                 <TableCell>{row.description}</TableCell>
@@ -164,18 +164,29 @@ const EventsPage = () => {
                             <TextField fullWidth label="City" name="city" value={currentEvent.city} onChange={handleChange} />
                         </Grid>
                         <Grid item xs={6}>
+                            <TextField fullWidth label="Time" name="time" value={currentEvent.time} onChange={handleChange} />
+                        </Grid>
+                        <Grid item xs={6}>
                             <TextField
                                 fullWidth
                                 type="date"
-                                label="Date"
-                                name="date"
-                                value={currentEvent.date}
+                                label="Start Date"
+                                name="startDate"
+                                value={currentEvent.startDate}
                                 onChange={handleChange}
                                 InputLabelProps={{ shrink: true }}
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth label="Time" name="time" value={currentEvent.time} onChange={handleChange} />
+                            <TextField
+                                fullWidth
+                                type="date"
+                                label="End Date"
+                                name="endDate"
+                                value={currentEvent.endDate}
+                                onChange={handleChange}
+                                InputLabelProps={{ shrink: true }}
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField fullWidth label="Contact Number" name="contact" value={currentEvent.contact} onChange={handleChange} />
