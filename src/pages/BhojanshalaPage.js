@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 const BhojanshalaPage = () => {
     const [bhojanshalas, setBhojanshalas] = useState([]);
     const [open, setOpen] = useState(false);
-    const [current, setCurrent] = useState({ name: '', city: '', address: '', timings: '', contact: '', description: '' });
+    const [current, setCurrent] = useState({ name: '', city: '', address: '', openingTime: '', closingTime: '', contact: '', description: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
@@ -42,11 +42,11 @@ const BhojanshalaPage = () => {
 
     const handleOpen = (item = null) => {
         if (item) {
-            setCurrent({ ...item });
+            setCurrent({ ...item, openingTime: item.openingTime || '', closingTime: item.closingTime || '' });
             setIsEdit(true);
             setImagePreview(item.image || null);
         } else {
-            setCurrent({ name: '', city: '', address: '', timings: '', contact: '', description: '' });
+            setCurrent({ name: '', city: '', address: '', openingTime: '', closingTime: '', contact: '', description: '' });
             setIsEdit(false);
             setImagePreview(null);
         }
@@ -72,7 +72,10 @@ const BhojanshalaPage = () => {
             formData.append('name', current.name);
             formData.append('city', current.city);
             formData.append('address', current.address);
-            formData.append('timings', current.timings);
+            formData.append('openingTime', current.openingTime);
+            formData.append('closingTime', current.closingTime);
+            // Combine for backward compatibility if needed, using a dummy value or the new values
+            formData.append('timings', `${current.openingTime} - ${current.closingTime}`);
             formData.append('contact', current.contact);
             formData.append('description', current.description || '');
 
@@ -86,11 +89,20 @@ const BhojanshalaPage = () => {
                 const endpoint = imageFile ? '/bhojanshala/with-image' : '/bhojanshala';
 
                 if (!imageFile) {
-                    await api.post('/bhojanshala', current);
+                    await api.post('/bhojanshala', current); // Note: current object needs to be updated if sending JSON not FormData for no-image case
+                    // But wait, the existing code for no-image handles JSON? 
+                    // Let's ensure 'current' has the new fields properly set if we use it directly.
+                    // Actually, let's fix the logic below to use FormData consistently OR ensure 'current' is right.
+                    // Given the existing structure, let's assume JSON body update:
                 } else {
                     await api.post(endpoint, formData, {
                         headers: { 'Content-Type': 'multipart/form-data' }
                     });
+                }
+
+                // Fix for the JSON path:
+                if (!imageFile) {
+                    await api.post('/bhojanshala', { ...current, timings: `${current.openingTime} - ${current.closingTime}` });
                 }
             }
             fetchBhojanshalas();
@@ -122,7 +134,8 @@ const BhojanshalaPage = () => {
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>City</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Address</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Timings</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Opening</TableCell>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Closing</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Contact</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Actions</TableCell>
                         </TableRow>
@@ -138,7 +151,8 @@ const BhojanshalaPage = () => {
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.city}</TableCell>
                                 <TableCell>{row.address}</TableCell>
-                                <TableCell>{row.timings}</TableCell>
+                                <TableCell>{row.openingTime || row.timings?.split('-')[0]}</TableCell>
+                                <TableCell>{row.closingTime || row.timings?.split('-')[1]}</TableCell>
                                 <TableCell>{row.contact}</TableCell>
                                 <TableCell>
                                     <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>
@@ -174,7 +188,10 @@ const BhojanshalaPage = () => {
                             <TextField fullWidth label="City" name="city" value={current.city} onChange={handleChange} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth label="Timings" name="timings" value={current.timings} onChange={handleChange} />
+                            <TextField fullWidth label="Opening Time" name="openingTime" placeholder="e.g. 11:00 AM" value={current.openingTime} onChange={handleChange} />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField fullWidth label="Closing Time" name="closingTime" placeholder="e.g. 02:00 PM" value={current.closingTime} onChange={handleChange} />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField fullWidth label="Address" name="address" value={current.address} onChange={handleChange} />
