@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
     const [open, setOpen] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '' });
+    const [currentEvent, setCurrentEvent] = useState({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '', latitude: null, longitude: null });
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const EventsPage = () => {
             });
             setIsEdit(true);
         } else {
-            setCurrentEvent({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '' });
+            setCurrentEvent({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '', latitude: null, longitude: null });
             setIsEdit(false);
         }
         setOpen(true);
@@ -66,6 +66,7 @@ const EventsPage = () => {
     };
 
     const handleSubmit = async () => {
+        let response;
         try {
             // Use FormData for File Upload
             const formData = new FormData();
@@ -77,6 +78,8 @@ const EventsPage = () => {
             formData.append('time', currentEvent.time);
             formData.append('contact', currentEvent.contact || '');
             formData.append('description', currentEvent.description);
+            if (currentEvent.latitude) formData.append('latitude', currentEvent.latitude);
+            if (currentEvent.longitude) formData.append('longitude', currentEvent.longitude);
 
             if (selectedFile) {
                 formData.append('image', selectedFile);
@@ -84,21 +87,35 @@ const EventsPage = () => {
 
             if (isEdit) {
                 if (selectedFile) {
-                    await api.put(`/events/upload/${currentEvent._id}`, formData);
+                    response = await api.put(`/events/upload/${currentEvent._id}`, formData);
                 } else {
-                    await api.put(`/events/${currentEvent._id}`, currentEvent);
+                    response = await api.put(`/events/${currentEvent._id}`, currentEvent);
                 }
             } else {
                 if (selectedFile) {
-                    await api.post('/events/with-image', formData);
+                    response = await api.post('/events/with-image', formData);
                 } else {
-                    await api.post('/events', currentEvent);
+                    response = await api.post('/events', currentEvent);
                 }
             }
+
+            // Verify Popup
+            if (response && response.data && response.data.event) {
+                const e = response.data.event;
+                const debugMsg = e.geocodeDebug || "No Debug Information";
+
+                if (e.latitude && e.longitude) {
+                    alert(`Event "${e.title}" Saved!\nLocation: ${e.latitude}, ${e.longitude}\n[Debug: ${debugMsg}]`);
+                } else {
+                    alert(`Event "${e.title}" Saved!\nWARNING: Location NOT Found.\nReason: ${debugMsg}`);
+                }
+            }
+
             fetchEvents();
             handleClose();
         } catch (err) {
             console.error(err);
+            alert("Error: " + (err.response?.data?.message || err.message));
         }
     };
 
