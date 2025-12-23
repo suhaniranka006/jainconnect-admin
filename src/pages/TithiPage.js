@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, IconButton, Dialog,
-    DialogTitle, DialogContent, DialogActions, TextField, Grid
+    DialogTitle, DialogContent, DialogActions, TextField, Grid, FormControlLabel, Checkbox
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Star, StarBorder } from '@mui/icons-material';
 import api from '../components/api';
 import Layout from '../components/Layout';
 
 const TithiPage = () => {
     const [tithis, setTithis] = useState([]);
     const [open, setOpen] = useState(false);
-    const [currentTithi, setCurrentTithi] = useState({ tithi: '', date: '', description: '' });
+    const [currentTithi, setCurrentTithi] = useState({ tithi: '', date: '', description: '', isMajor: false });
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -42,11 +42,12 @@ const TithiPage = () => {
         if (tithi) {
             setCurrentTithi({
                 ...tithi,
-                date: tithi.date ? new Date(tithi.date).toISOString().split('T')[0] : ''
+                date: tithi.date ? new Date(tithi.date).toISOString().split('T')[0] : '',
+                isMajor: tithi.isMajor || false
             });
             setIsEdit(true);
         } else {
-            setCurrentTithi({ tithi: '', date: '', description: '' });
+            setCurrentTithi({ tithi: '', date: '', description: '', isMajor: false });
             setIsEdit(false);
         }
         setOpen(true);
@@ -71,7 +72,11 @@ const TithiPage = () => {
     };
 
     const handleChange = (e) => {
-        setCurrentTithi({ ...currentTithi, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        setCurrentTithi({
+            ...currentTithi,
+            [name]: type === 'checkbox' ? checked : value
+        });
     };
 
     return (
@@ -87,6 +92,7 @@ const TithiPage = () => {
                 <Table>
                     <TableHead sx={{ bgcolor: 'secondary.light' }}>
                         <TableRow>
+                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Important</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Tithi</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Date</TableCell>
                             <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Description</TableCell>
@@ -96,6 +102,9 @@ const TithiPage = () => {
                     <TableBody>
                         {tithis.map((row) => (
                             <TableRow key={row._id}>
+                                <TableCell>
+                                    {row.isMajor ? <Star color="warning" /> : <StarBorder color="disabled" />}
+                                </TableCell>
                                 <TableCell>{row.tithi}</TableCell>
                                 <TableCell>{new Date(row.date).toLocaleDateString()}</TableCell>
                                 <TableCell>{row.description}</TableCell>
@@ -113,6 +122,19 @@ const TithiPage = () => {
                 <DialogTitle>{isEdit ? 'Edit Tithi' : 'Add New Tithi'}</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={currentTithi.isMajor}
+                                        onChange={handleChange}
+                                        name="isMajor"
+                                        color="primary"
+                                    />
+                                }
+                                label="Major Parva (Important Festival)"
+                            />
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField fullWidth label="Tithi Name" name="tithi" value={currentTithi.tithi} onChange={handleChange} />
                         </Grid>
