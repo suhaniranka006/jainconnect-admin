@@ -43,11 +43,22 @@ const MaharajPage = () => {
         }
     };
 
+
+    // === HELPER: Fix Image URL ===
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith('http') || imagePath.startsWith('blob:')) return imagePath;
+
+        const cleanPath = imagePath.replace(/\\/g, '/');
+        // Admin Panel Base URL (adjust if needed, or use api.defaults.baseURL)
+        return `https://jainconnect-backened-2.onrender.com/${cleanPath}`;
+    };
+
     const handleOpen = (maharaj = null) => {
         if (maharaj) {
             setCurrentMaharaj(maharaj);
             setIsEdit(true);
-            setImagePreview(maharaj.image || null);
+            setImagePreview(getImageUrl(maharaj.image) || null);
         } else {
             setCurrentMaharaj({
                 name: '', city: '', title: '', contactInfo: '', date: '',
@@ -147,7 +158,7 @@ const MaharajPage = () => {
                         {maharajs.map((row) => (
                             <TableRow key={row._id}>
                                 <TableCell>
-                                    <Avatar src={row.image} alt={row.name}>
+                                    <Avatar src={getImageUrl(row.image)} alt={row.name}>
                                         {row.name.charAt(0)}
                                     </Avatar>
                                 </TableCell>
