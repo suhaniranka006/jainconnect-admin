@@ -1,3 +1,9 @@
+// =================================================================================================
+// 🔓 LOGIN PAGE
+// =================================================================================================
+// The entry point for Admins.
+// It takes Email & Password -> Sends to Backend -> Gets Token -> Redirects to Dashboard.
+
 import React, { useState } from 'react';
 import {
     Box,
@@ -12,29 +18,37 @@ import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    // Local State for input fields
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Hooks from Context and Router
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    // Handle Login Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setLoading(true);
+        setLoading(true); // Disable button while loading
         try {
+            // 1. Call AuthContext login function
             await login(email, password);
+            // 2. If successful, redirect to Home ('/')
             navigate('/');
         } catch (err) {
+            // 3. If failed, show error message
             setError('Login failed. Please check your credentials.');
             console.error(err);
         } finally {
-            setLoading(false);
+            setLoading(false); // Re-enable button
         }
     };
 
     return (
+        // Full Screen Centered Layout with Gradient Background
         <Box
             sx={{
                 height: '100vh',
@@ -53,6 +67,7 @@ const Login = () => {
                         Admin Panel Login
                     </Typography>
 
+                    {/* Show Error Alert if Login Fails */}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
                     <form onSubmit={handleSubmit}>

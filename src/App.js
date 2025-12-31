@@ -1,9 +1,18 @@
+// =================================================================================================
+// 📱 MAIN APP COMPONENT
+// =================================================================================================
+// Only Purpose: Routing & Configuration
+// 1. Sets up the "Theme" (Colors, Fonts).
+// 2. Sets up "AuthContext" (Who is logged in?).
+// 3. Defines "Routes" (Which URL goes to which Page?).
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { AuthProvider } from './auth/AuthContext';
 import theme from './theme/theme';
 
+// Import All Pages
 import Login from './pages/Login';
 import MaharajPage from './pages/MaharajPage';
 import EventsPage from './pages/EventsPage';
@@ -13,16 +22,26 @@ import TemplePage from './pages/TemplePage';
 import CarpoolPage from './pages/CarpoolPage';
 import StoriesPage from './pages/StoriesPage';
 import TirthyatraTemplatesPage from './pages/TirthyatraTemplatesPage';
+
+// Security Component (Redirection logic)
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
+    // 🎨 ThemeProvider: Makes sure all buttons/text use our custom colors
     <ThemeProvider theme={theme}>
+
+      {/* 🔐 AuthProvider: Lets any component check "Is user logged in?" */}
       <AuthProvider>
+
+        {/* 🗺️ BrowserRouter: Listens to the URL bar */}
         <BrowserRouter>
           <Routes>
+
+            {/* PUBLIC ROUTE: Anyone can see Login */}
             <Route path="/login" element={<Login />} />
 
+            {/* ROOT ROUTE: Redirects to /maharajs if logged in, else to Login */}
             <Route
               path="/"
               element={
@@ -32,6 +51,9 @@ function App() {
               }
             />
 
+            {/* 🔒 PROTECTED ROUTES (Must be logged in) */}
+
+            {/* Maharaj (Monks) Management */}
             <Route
               path="/maharajs"
               element={
@@ -41,6 +63,7 @@ function App() {
               }
             />
 
+            {/* Events Management */}
             <Route
               path="/events"
               element={
@@ -50,6 +73,7 @@ function App() {
               }
             />
 
+            {/* Tithi (Calendar) Management */}
             <Route
               path="/tithis"
               element={
@@ -59,6 +83,7 @@ function App() {
               }
             />
 
+            {/* Bhojanshala (Dining) Management */}
             <Route
               path="/bhojanshalas"
               element={
@@ -68,6 +93,7 @@ function App() {
               }
             />
 
+            {/* Temple Management */}
             <Route
               path="/temples"
               element={
@@ -77,6 +103,7 @@ function App() {
               }
             />
 
+            {/* Carpool (Ride Share) Management */}
             <Route
               path="/carpools"
               element={
@@ -86,6 +113,7 @@ function App() {
               }
             />
 
+            {/* Stories (Blog) Management */}
             <Route
               path="/stories"
               element={
@@ -95,6 +123,7 @@ function App() {
               }
             />
 
+            {/* Trip Templates Management */}
             <Route
               path="/tirthyatra-templates"
               element={
@@ -104,6 +133,7 @@ function App() {
               }
             />
 
+            {/* FALLBACK: Any unknown URL -> Go Home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

@@ -1,3 +1,10 @@
+// =================================================================================================
+// 🚗 CARPOOL PAGE
+// =================================================================================================
+// Manages Ride-Sharing/Carpool Entries.
+// Features: List all active rides, View details (Driver, Route, Time), Delete Rides.
+// Note: Admin helps moderate these listings but usually doesn't create them (User generated).
+
 import React, { useState, useEffect } from 'react';
 import {
     Box,
@@ -18,10 +25,12 @@ import Layout from '../components/Layout';
 import api from '../components/api';
 
 const CarpoolPage = () => {
+    // State
     const [rides, setRides] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch Rides
+    // 1. FETCH RIDES
+    // Fetches all carpool listings from the backend.
     const fetchRides = async () => {
         try {
             const response = await api.get('/carpool/all');
@@ -37,11 +46,14 @@ const CarpoolPage = () => {
         fetchRides();
     }, []);
 
-    // Delete Ride
+    // 2. DELETE RIDE
+    // Removes a ride listing (moderation action).
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this ride?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/carpool/${id}`);
+                // Using 'api' instance is preferred over direct axios call for auth headers
+                // Fixed: Replace hardcoded URL with api instance
+                await api.delete(`/carpool/${id}`);
                 fetchRides();
             } catch (error) {
                 console.error("Error deleting ride:", error);
@@ -50,6 +62,7 @@ const CarpoolPage = () => {
         }
     };
 
+    // 3. RENDER
     return (
         <Layout>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>

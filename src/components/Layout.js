@@ -1,3 +1,13 @@
+// =================================================================================================
+// 📐 MAIN LAYOUT COMPONENT
+// =================================================================================================
+// This wrapper is used on every logged-in page.
+// It provides:
+// 1. The Top Bar (AppBar) with Logout button.
+// 2. The Side Menu (Drawer) with navigation links.
+// 3. The Responsive Design (Mobile menu toggle).
+// 4. The Main Content Area where the page goes.
+
 import React from 'react';
 import {
     Box,
@@ -28,18 +38,19 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
-const drawerWidth = 240;
+const drawerWidth = 240; // Width of the sidebar
 
 const Layout = ({ children }) => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = React.useState(false); // For mobile menu toggle
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    // 📋 Navigation Menu Items
     const menuItems = [
         { text: 'Maharaj List', icon: <PersonIcon />, path: '/maharajs' },
         { text: 'Events', icon: <EventIcon />, path: '/events' },
@@ -51,6 +62,7 @@ const Layout = ({ children }) => {
         { text: 'Tirthyatra Templates', icon: <HikeIcon />, path: '/tirthyatra-templates' },
     ];
 
+    // 🖼️ The Drawer Content (Sidebar UI)
     const drawer = (
         <div>
             <Toolbar>
@@ -64,7 +76,7 @@ const Layout = ({ children }) => {
                         button
                         key={item.text}
                         onClick={() => navigate(item.path)}
-                        selected={location.pathname === item.path}
+                        selected={location.pathname === item.path} // Highlight active page
                         sx={{
                             '&.Mui-selected': {
                                 backgroundColor: 'rgba(233, 30, 99, 0.08)',
@@ -91,6 +103,8 @@ const Layout = ({ children }) => {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
+
+            {/* 🔝 TOP APP BAR */}
             <AppBar
                 position="fixed"
                 sx={{
@@ -102,6 +116,7 @@ const Layout = ({ children }) => {
                 }}
             >
                 <Toolbar>
+                    {/* Hamburger Menu (Mobile Only) */}
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -119,15 +134,18 @@ const Layout = ({ children }) => {
                     </Button>
                 </Toolbar>
             </AppBar>
+
+            {/* 👈 SIDEBAR (DRAWER) */}
             <Box
                 component="nav"
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
             >
+                {/* Mobile Drawer (Temporary) */}
                 <Drawer
                     variant="temporary"
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
-                    ModalProps={{ keepMounted: true }}
+                    ModalProps={{ keepMounted: true }} // Better open performance on mobile
                     sx={{
                         display: { xs: 'block', sm: 'none' },
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
@@ -135,6 +153,8 @@ const Layout = ({ children }) => {
                 >
                     {drawer}
                 </Drawer>
+
+                {/* Desktop Drawer (Permanent) */}
                 <Drawer
                     variant="permanent"
                     sx={{
@@ -146,11 +166,13 @@ const Layout = ({ children }) => {
                     {drawer}
                 </Drawer>
             </Box>
+
+            {/* 📄 MAIN CONTENT AREA */}
             <Box
                 component="main"
                 sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, minHeight: '100vh', bgcolor: '#f4f6f8' }}
             >
-                <Toolbar />
+                <Toolbar /> {/* Spacer for keeping content below AppBar */}
                 {children}
             </Box>
         </Box>

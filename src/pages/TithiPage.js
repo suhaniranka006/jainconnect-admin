@@ -1,3 +1,9 @@
+// =================================================================================================
+// 📅 TITHI PAGE
+// =================================================================================================
+// Manages the Jain Calendar (Panchang).
+// Features: List Tithis, Mark Major Parva (Important Festivals), Add/Edit/Delete.
+
 import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
@@ -9,11 +15,13 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const TithiPage = () => {
+    // State
     const [tithis, setTithis] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentTithi, setCurrentTithi] = useState({ tithi: '', date: '', description: '', isMajor: false });
     const [isEdit, setIsEdit] = useState(false);
 
+    // Fetch on Mount
     useEffect(() => {
         fetchTithis();
     }, []);
@@ -27,6 +35,7 @@ const TithiPage = () => {
         }
     };
 
+    // Handlers
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Tithi?')) {
             try {
@@ -42,7 +51,7 @@ const TithiPage = () => {
         if (tithi) {
             setCurrentTithi({
                 ...tithi,
-                date: tithi.date ? new Date(tithi.date).toISOString().split('T')[0] : '',
+                date: tithi.date ? new Date(tithi.date).toISOString().split('T')[0] : '', // Format date YYYY-MM-DD
                 isMajor: tithi.isMajor || false
             });
             setIsEdit(true);

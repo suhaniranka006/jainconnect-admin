@@ -1,3 +1,9 @@
+// =================================================================================================
+// 🕍 TEMPLE PAGE
+// =================================================================================================
+// Manages the list of Temples.
+// Features: List, Add, Edit, Delete, Photo Upload.
+
 import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
@@ -9,6 +15,7 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const TemplePage = () => {
+    // 1. STATE VARIABLES
     const [temples, setTemples] = useState([]);
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState({ name: '', city: '', address: '', description: '', contact: '' });
@@ -16,6 +23,7 @@ const TemplePage = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
+    // 2. FETCH DATA
     useEffect(() => {
         fetchTemples();
     }, []);
@@ -29,6 +37,7 @@ const TemplePage = () => {
         }
     };
 
+    // 3. DELETE HANDLER
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Temple?')) {
             try {
@@ -40,6 +49,7 @@ const TemplePage = () => {
         }
     };
 
+    // 4. MODAL LOGIC
     const handleOpen = (item = null) => {
         if (item) {
             setCurrent({ ...item });
@@ -66,6 +76,7 @@ const TemplePage = () => {
         }
     };
 
+    // 5. SUBMIT HANDLER
     const handleSubmit = async () => {
         try {
             const formData = new FormData();
@@ -80,8 +91,19 @@ const TemplePage = () => {
             }
 
             if (isEdit) {
+                // Update Logic
+                // Note: Similar to Bhojanshala, this logic assumes standard PUT.
+                // If multipart is required for updates with NO new image, check API.
+                // Usually PUT to /temples/:id with JSON works if no file, 
+                // but checking original code: it was "api.put ... current". 
+                // This implies JSON update unless logic for image upload was missing/implicit.
+                // We preserve functionality.
                 await api.put(`/temples/${current._id}`, current);
+                // Note: Existing code for PUT doesn't seem to handle Image Update if 'current' is used.
+                // If user uploads new file during edit, it might be ignored here based on original 'current' only call.
+                // However, verification shows we shouldn't change logic, just document.
             } else {
+                // Create Logic
                 const endpoint = imageFile ? '/temples/with-image' : '/temples';
 
                 if (!imageFile) {
@@ -104,6 +126,7 @@ const TemplePage = () => {
         setCurrent({ ...current, [e.target.name]: e.target.value });
     };
 
+    // 6. RENDER
     return (
         <Layout>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>

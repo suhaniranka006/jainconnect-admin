@@ -1,3 +1,9 @@
+// =================================================================================================
+// 🧘 MAHARAJ PAGE
+// =================================================================================================
+// Manages the list of Jain Monks/Saints.
+// Features: Upload Photo, Add Details (Name, Location, Vihar), List, Edit, Delete.
+
 import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
@@ -9,16 +15,18 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const MaharajPage = () => {
+    // 1. STATE MANAGEMENT
     const [maharajs, setMaharajs] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentMaharaj, setCurrentMaharaj] = useState({
         name: '', city: '', title: '', contactInfo: '', date: '',
         arrivalDate: '', viharDate: '', description: ''
     });
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null); // Actual File Object
+    const [imagePreview, setImagePreview] = useState(null); // Preview URL
     const [isEdit, setIsEdit] = useState(false);
 
+    // 2. FETCH DATA
     useEffect(() => {
         fetchMaharajs();
     }, []);
@@ -32,6 +40,7 @@ const MaharajPage = () => {
         }
     };
 
+    // 3. DELETE
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Maharaj?')) {
             try {
@@ -45,6 +54,8 @@ const MaharajPage = () => {
 
 
     // === HELPER: Fix Image URL ===
+    // Backend returns relative path (e.g., "uploads/image.jpg").
+    // We need to prepend the server URL to display it.
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
         if (imagePath.startsWith('http') || imagePath.startsWith('blob:')) return imagePath;
@@ -54,12 +65,15 @@ const MaharajPage = () => {
         return `https://jainconnect-backened-2.onrender.com/${cleanPath}`;
     };
 
+    // 4. MODAL LOGIC
     const handleOpen = (maharaj = null) => {
         if (maharaj) {
+            // Edit Mode
             setCurrentMaharaj(maharaj);
             setIsEdit(true);
             setImagePreview(getImageUrl(maharaj.image) || null);
         } else {
+            // Add Mode
             setCurrentMaharaj({
                 name: '', city: '', title: '', contactInfo: '', date: '',
                 arrivalDate: '', viharDate: '', description: ''
@@ -79,10 +93,11 @@ const MaharajPage = () => {
         const file = e.target.files[0];
         if (file) {
             setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
+            setImagePreview(URL.createObjectURL(file)); // Make it visible instantly
         }
     };
 
+    // 5. SUBMIT (MULTIPART FORM DATA)
     const handleSubmit = async () => {
         try {
             const formData = new FormData();
@@ -90,7 +105,7 @@ const MaharajPage = () => {
             formData.append('city', currentMaharaj.city);
             formData.append('title', currentMaharaj.title || '');
             formData.append('contactInfo', currentMaharaj.contactInfo || '');
-            formData.append('description', currentMaharaj.description || ''); // New Field
+            formData.append('description', currentMaharaj.description || '');
             if (currentMaharaj.date) formData.append('date', currentMaharaj.date);
             if (currentMaharaj.arrivalDate) formData.append('arrivalDate', currentMaharaj.arrivalDate);
             if (currentMaharaj.viharDate) formData.append('viharDate', currentMaharaj.viharDate);
@@ -99,8 +114,7 @@ const MaharajPage = () => {
                 formData.append('image', imageFile);
             }
 
-
-
+            // Route Logic: Support separate endpoints for With/Without Image
             if (isEdit) {
                 const endpoint = imageFile
                     ? `/maharaj/${currentMaharaj._id}/with-image`
@@ -109,7 +123,7 @@ const MaharajPage = () => {
                 if (!imageFile) {
                     await api.put(`/maharaj/${currentMaharaj._id}`, currentMaharaj);
                 } else {
-                    // Axios automatically sets Content-Type to multipart/form-data with boundary
+                    // Axios automatically sets Content-Type to multipart/form-data
                     await api.put(endpoint, formData);
                 }
             } else {
@@ -133,6 +147,7 @@ const MaharajPage = () => {
         setCurrentMaharaj({ ...currentMaharaj, [e.target.name]: e.target.value });
     };
 
+    // 6. RENDER
     return (
         <Layout>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>

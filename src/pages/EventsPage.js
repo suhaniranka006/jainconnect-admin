@@ -1,3 +1,10 @@
+// =================================================================================================
+// 📅 EVENTS PAGE
+// =================================================================================================
+// This page manages the "Events" section of the app.
+// Features: List Events, Add New Event, Edit Event, Delete Event.
+// It uses a Dialog (Modal) for the Add/Edit form.
+
 import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
@@ -9,11 +16,14 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const EventsPage = () => {
+    // 1. STATE VARIABLES
     const [events, setEvents] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false); // Controls Modal visibility
     const [currentEvent, setCurrentEvent] = useState({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '', latitude: null, longitude: null });
-    const [isEdit, setIsEdit] = useState(false);
+    const [isEdit, setIsEdit] = useState(false); // Are we editing or creating?
+    const [selectedFile, setSelectedFile] = useState(null); // File upload state
 
+    // 2. FETCH DATA ON LOAD
     useEffect(() => {
         fetchEvents();
     }, []);
@@ -27,19 +37,22 @@ const EventsPage = () => {
         }
     };
 
+    // 3. DELETE HANDLER
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Event?')) {
             try {
                 await api.delete(`/events/${id}`);
-                setEvents(events.filter(e => e._id !== id));
+                setEvents(events.filter(e => e._id !== id)); // Optimistic update
             } catch (err) {
                 console.error(err);
             }
         }
     };
 
+    // 4. MODAL HANDLERS
     const handleOpen = (event = null) => {
         if (event) {
+            // EDIT MODE: Populate form with existing data
             setCurrentEvent({
                 ...event,
                 startDate: event.startDate || (event.date ? event.date.split('T')[0] : ''),
@@ -48,6 +61,7 @@ const EventsPage = () => {
             });
             setIsEdit(true);
         } else {
+            // ADD MODE: Reset form
             setCurrentEvent({ title: '', city: '', startDate: '', endDate: '', date: '', time: '', description: '', contact: '', latitude: null, longitude: null });
             setIsEdit(false);
         }
@@ -59,16 +73,15 @@ const EventsPage = () => {
         setSelectedFile(null);
     };
 
-    const [selectedFile, setSelectedFile] = useState(null); // State for file
-
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
 
+    // 5. FORM SUBMISSION (CREATE/UPDATE)
     const handleSubmit = async () => {
         let response;
         try {
-            // Use FormData for File Upload
+            // Use FormData because we may be uploading an image file
             const formData = new FormData();
             formData.append('title', currentEvent.title);
             formData.append('city', currentEvent.city);
@@ -85,6 +98,7 @@ const EventsPage = () => {
                 formData.append('image', selectedFile);
             }
 
+            // Decide Endpoint based on EDIT vs ADD and IMAGE vs NO-IMAGE
             if (isEdit) {
                 if (selectedFile) {
                     response = await api.put(`/events/upload/${currentEvent._id}`, formData);
@@ -99,7 +113,7 @@ const EventsPage = () => {
                 }
             }
 
-            // Verify Popup
+            // Show Feedback Alert
             if (response && response.data && response.data.event) {
                 const e = response.data.event;
                 const debugMsg = e.geocodeDebug || "No Debug Information";
@@ -111,20 +125,23 @@ const EventsPage = () => {
                 }
             }
 
-            fetchEvents();
-            handleClose();
+            fetchEvents(); // Refresh List
+            handleClose(); // Close Modal
         } catch (err) {
             console.error(err);
             alert("Error: " + (err.response?.data?.message || err.message));
         }
     };
 
+    // Handle Input Change
     const handleChange = (e) => {
         setCurrentEvent({ ...currentEvent, [e.target.name]: e.target.value });
     };
 
+    // 6. RENDER UI
     return (
         <Layout>
+            {/* Header Section */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                 <Typography variant="h4" color="primary">Events Management</Typography>
                 <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()}>
@@ -132,6 +149,7 @@ const EventsPage = () => {
                 </Button>
             </Box>
 
+            {/* Events Table */}
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead sx={{ bgcolor: 'secondary.light' }}>
@@ -170,6 +188,7 @@ const EventsPage = () => {
                 </Table>
             </TableContainer>
 
+            {/* Add/Edit Dialog Modal */}
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
                 <DialogTitle>{isEdit ? 'Edit Event' : 'Add New Event'}</DialogTitle>
                 <DialogContent>
@@ -183,6 +202,7 @@ const EventsPage = () => {
                         <Grid item xs={6}>
                             <TextField fullWidth label="Time" name="time" value={currentEvent.time} onChange={handleChange} />
                         </Grid>
+                        {/* Dates: Shrink label to avoid overlap with date placeholder */}
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
@@ -208,6 +228,8 @@ const EventsPage = () => {
                         <Grid item xs={12}>
                             <TextField fullWidth label="Contact Number" name="contact" value={currentEvent.contact} onChange={handleChange} />
                         </Grid>
+
+                        {/* File Upload Button */}
                         <Grid item xs={12}>
                             <input
                                 accept="image/*"
@@ -222,6 +244,7 @@ const EventsPage = () => {
                                 </Button>
                             </label>
                         </Grid>
+
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth

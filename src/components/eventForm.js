@@ -1,19 +1,30 @@
+// =================================================================================================
+// 📝 EVENT FORM COMPONENT
+// =================================================================================================
+// This component renders a form to Add or Edit an event.
+// Props:
+// - editEvent: The event object to edit (null if adding new).
+// - onAdd: Function to call when a new event is added.
+// - onUpdate: Function to call when an event is updated.
+// - onCancel: Function to call when cancel button is clicked.
+
 import React, { useState, useEffect } from 'react';
 import api from "./api";
 
 function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
+  // 1. Local State for Form Fields
   const [title, setTitle] = useState("");
-  // 'location' ko waapas 'city' kar dein
-  const [city, setCity] = useState(""); 
+  const [city, setCity] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
 
+  // 2. Effect: Populate form if editing
   useEffect(() => {
     if (editEvent) {
       setTitle(editEvent.title || "");
-      // 'editEvent.location' ko waapas 'editEvent.city' kar dein
-      setCity(editEvent.city || ""); 
+      setCity(editEvent.city || "");
+      // Format date to YYYY-MM-DD for input type="date"
       setDate(editEvent.date ? new Date(editEvent.date).toISOString().split('T')[0] : "");
       setTime(editEvent.time || "");
       setDescription(editEvent.description || "");
@@ -22,25 +33,27 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
     }
   }, [editEvent]);
 
+  // Helper to clear form
   const resetForm = () => {
     setTitle("");
-    // 'setLocation' ko waapas 'setCity' kar dein
-    setCity(""); 
+    setCity("");
     setDate("");
     setTime("");
     setDescription("");
   };
 
+  // 3. Handle Form Submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Yahan 'location' ki jagah waapas 'city' bhejein
-    const eventData = { title, city, date, time, description }; 
+    e.preventDefault(); // Stop page reload
+    const eventData = { title, city, date, time, description };
 
     try {
       if (editEvent && editEvent._id) {
+        // UPDATE existing event
         const res = await api.put(`/events/${editEvent._id}`, eventData);
         onUpdate(res.data);
       } else {
+        // CREATE new event
         const res = await api.post("/events", eventData);
         onAdd(res.data);
       }
@@ -63,7 +76,6 @@ function EventForm({ editEvent, onAdd, onUpdate, onCancel }) {
         onChange={(e) => setTitle(e.target.value)}
         required
       />
-      {/* Input field ko bhi waapas 'city' ke liye update karein */}
       <input
         type="text"
         placeholder="City"

@@ -1,8 +1,13 @@
+// =================================================================================================
+// 📅 TITHI LIST COMPONENT
+// =================================================================================================
+// Displays list of upcoming Tithis.
+
 // TithiList.js (UPDATED)
 
 import React, { useEffect } from 'react';
 // Axios ko hata kar apni nayi api service import karein
-import api from './api'; 
+import api from './api';
 
 function TithiList({ tithis, setTithis, onEdit, onDelete }) {
   useEffect(() => { fetchTithis(); }, []);

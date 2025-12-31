@@ -1,7 +1,15 @@
+// =================================================================================================
+// 📋 EVENT LIST COMPONENT
+// =================================================================================================
+// This component displays a table of all events.
+// It fetches data on mount and provides Edit/Delete buttons.
+
 import React, { useEffect } from "react";
 import api from "./api";
 
-function EventList({ onEdit, onDelete, events, setEvents }) {
+function EventList({ onEdit, onDelete, events, setEvents }) { // Props passed from Parent Page
+
+  // 1. Fetch Events on Load
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -9,17 +17,18 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
   const fetchEvents = async () => {
     try {
       const res = await api.get("/events");
-      setEvents(res.data);
+      setEvents(res.data); // Update state in parent
     } catch (err) {
       console.error("Error fetching events:", err.response?.data || err.message);
       alert("Error fetching events");
     }
   };
 
+  // 2. Handle Delete
   const handleDelete = async (id) => {
     try {
       await api.delete(`/events/${id}`);
-      onDelete(id);
+      onDelete(id); // Update UI locally
     } catch (err) {
       console.error("Error deleting event:", err.response?.data || err.message);
       alert("Error deleting event");
@@ -33,8 +42,7 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
         <thead>
           <tr>
             <th>Title</th>
-            {/* 'location' ko waapas 'City' kar dein */}
-            <th>City</th> 
+            <th>City</th>
             <th>Date</th>
             <th>Time</th>
             <th>Description</th>
@@ -42,11 +50,11 @@ function EventList({ onEdit, onDelete, events, setEvents }) {
           </tr>
         </thead>
         <tbody>
+          {/* 3. Loop through events and render rows */}
           {events.map((ev) => (
             <tr key={ev._id}>
               <td>{ev.title}</td>
-              {/* 'ev.location' ko waapas 'ev.city' kar dein */}
-              <td>{ev.city}</td> 
+              <td>{ev.city}</td>
               <td>{new Date(ev.date).toLocaleDateString()}</td>
               <td>{ev.time}</td>
               <td>{ev.description}</td>

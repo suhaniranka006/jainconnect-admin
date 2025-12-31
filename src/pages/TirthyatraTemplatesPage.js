@@ -1,3 +1,9 @@
+// =================================================================================================
+// 🗺️ TIRTHYATRA TEMPLATES PAGE
+// =================================================================================================
+// Manages predefined trips/templates for Tirthyatras (Pilgrimages).
+// Features: List Templates, Add/Edit Template details (Title, Duration, Image), Mark as Popular.
+
 import React, { useState, useEffect } from 'react';
 import {
     Container,
@@ -26,6 +32,7 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const TirthyatraTemplatesPage = () => {
+    // 1. STATE VARIABLES
     const [templates, setTemplates] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [currentTemplate, setCurrentTemplate] = useState({
@@ -37,6 +44,7 @@ const TirthyatraTemplatesPage = () => {
         defaultItinerary: [] // Simplified for now, can be expanded later
     });
 
+    // 2. FETCH TEMPLATES
     const fetchTemplates = async () => {
         try {
             const response = await api.get('/tirthyatra/templates');
@@ -54,6 +62,7 @@ const TirthyatraTemplatesPage = () => {
 
     const [selectedImage, setSelectedImage] = useState(null);
 
+    // 3. DIALOG HANDLERS
     const handleOpenDialog = (template = null) => {
         if (template) {
             setCurrentTemplate(template);
@@ -90,6 +99,7 @@ const TirthyatraTemplatesPage = () => {
         }
     };
 
+    // 4. SUBMIT HANDLER (MULTIPART)
     const handleSave = async () => {
         try {
             const formData = new FormData();
@@ -102,11 +112,8 @@ const TirthyatraTemplatesPage = () => {
                 formData.append('image', selectedImage);
             }
 
-            // Note: If updating and no new image, backend keeps old one if we don't send 'image' key or send it empty?
-            // Actually our backend code checks `if (req.file)`. So if we don't send file, it preserves old image field in mongo if we used spread operator carefully,
-            // BUT wait, we used `let updateData = { ...req.body };` in backend. 
-            // If we send other fields via formData, multer populates req.body. 
-            // So logic holds.
+            // Note: Cloudinary middleware in backend handles file upload.
+            // If updating and no new image, backend preserves the old one if logic allows.
 
             const config = {
                 headers: {
@@ -127,6 +134,7 @@ const TirthyatraTemplatesPage = () => {
         }
     };
 
+    // 5. DELETE HANDLER
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this template?')) {
             try {
@@ -139,6 +147,7 @@ const TirthyatraTemplatesPage = () => {
         }
     };
 
+    // 6. RENDER
     return (
         <Layout>
             <Container>

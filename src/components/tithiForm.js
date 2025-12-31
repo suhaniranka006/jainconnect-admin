@@ -1,7 +1,9 @@
-// TithiForm.js (UPDATED)
+// =================================================================================================
+// 📅 TITHI FORM COMPONENT
+// =================================================================================================
+// Form to Add or Edit Tithi (Jain Calendar) info.
 
 import React, { useState, useEffect } from 'react';
-// Axios ko hata kar apni nayi api service import karein
 import api from './api';
 
 function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
@@ -9,10 +11,10 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
 
+  // Auto-fill form on edit
   useEffect(() => {
     if (editTithi) {
       setTithi(editTithi.tithi || '');
-      // Date ko YYYY-MM-DD format me set karein taaki input field me dikh sake
       setDate(editTithi.date ? new Date(editTithi.date).toISOString().split('T')[0] : '');
       setDescription(editTithi.description || '');
     } else {
@@ -32,11 +34,9 @@ function TithiForm({ editTithi, onAdd, onUpdate, onCancel }) {
 
     try {
       if (editTithi && editTithi._id) {
-        // axios.put ko api.put se badal dein
         const res = await api.put(`/tithis/${editTithi._id}`, tithiData);
         onUpdate(res.data);
       } else {
-        // axios.post ko api.post se badal dein
         const res = await api.post('/tithis', tithiData);
         onAdd(res.data);
       }

@@ -1,3 +1,10 @@
+// =================================================================================================
+// 📚 STORIES PAGE (Jain Legacy)
+// =================================================================================================
+// Manages the "Jain Legacy" Stories section.
+// Features: List Stories, Add/Edit Story, Photo Upload, Like tracking.
+// Note: These are admin-created educational/motivational stories.
+
 import React, { useState, useEffect } from 'react';
 import {
     Box, Button, Typography, Paper, Table, TableBody, TableCell,
@@ -9,6 +16,7 @@ import api from '../components/api';
 import Layout from '../components/Layout';
 
 const StoriesPage = () => {
+    // 1. STATE VARIABLES
     const [stories, setStories] = useState([]);
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState({ title: '', summary: '', content: '', source: '' });
@@ -17,6 +25,7 @@ const StoriesPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [editId, setEditId] = useState(null);
 
+    // 2. FETCH DATA
     useEffect(() => {
         fetchStories();
     }, []);
@@ -30,6 +39,7 @@ const StoriesPage = () => {
         }
     };
 
+    // 3. DELETE HANDLER
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this Story?')) {
             try {
@@ -41,13 +51,16 @@ const StoriesPage = () => {
         }
     };
 
+    // 4. MODAL LOGIC (OPEN/CLOSE)
     const handleOpen = (item = null) => {
         if (item) {
+            // Edit Mode
             setCurrent({ ...item });
             setEditId(item._id);
             setIsEdit(true);
             setImagePreview(item.imageUrl || null);
         } else {
+            // Add Mode
             setCurrent({ title: '', summary: '', content: '', source: '' });
             setEditId(null);
             setIsEdit(false);
@@ -69,6 +82,7 @@ const StoriesPage = () => {
         }
     };
 
+    // 5. SUBMIT HANDLER (MULTIPART)
     const handleSubmit = async () => {
         try {
             const formData = new FormData();
@@ -81,6 +95,7 @@ const StoriesPage = () => {
                 formData.append('image', imageFile);
             }
 
+            // Note: Different endpoint structure '/stories/update/:id' and '/stories/add'
             if (isEdit) {
                 await api.put(`/stories/update/${editId}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
@@ -102,6 +117,7 @@ const StoriesPage = () => {
         setCurrent({ ...current, [e.target.name]: e.target.value });
     };
 
+    // 6. RENDER
     return (
         <Layout>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>

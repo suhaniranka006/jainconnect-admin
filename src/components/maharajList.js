@@ -1,21 +1,23 @@
-// MaharajList.js (UPDATED)
+// =================================================================================================
+// 📋 MAHARAJ LIST COMPONENT
+// =================================================================================================
+// Handles displaying, deleting, and editing Maharaj entries.
 
 import React, { useEffect, useState } from 'react';
-// Axios ko hata kar apni nayi api service import karein
-import api from './api'; 
+import api from './api';
 import MaharajForm from './maharajForm';
 
 function MaharajList() {
   const [maharajs, setMaharajs] = useState([]);
   const [editMaharaj, setEditMaharaj] = useState(null);
 
+  // Fetch on mount
   useEffect(() => {
     fetchMaharajs();
   }, []);
 
   const fetchMaharajs = async () => {
     try {
-      // Sirf endpoint '/maharajs' ka istemal karein
       const res = await api.get('/maharajs');
       setMaharajs(res.data);
     } catch (err) {
@@ -26,8 +28,6 @@ function MaharajList() {
 
   const handleDelete = async (id) => {
     try {
-      // axios.delete ko api.delete se badal dein
-      // Token apne aap headers me chala jayega
       await api.delete(`/maharajs/${id}`);
       setMaharajs(maharajs.filter(m => m._id !== id));
     } catch (err) {
@@ -37,6 +37,7 @@ function MaharajList() {
     }
   };
 
+  // State Updates from Child Form
   const handleAdd = (newMaharaj) => {
     setMaharajs([...maharajs, newMaharaj]);
   };
@@ -58,6 +59,7 @@ function MaharajList() {
 
   return (
     <div>
+      {/* Form Component attached at top */}
       <MaharajForm
         onAdd={handleAdd}
         editMaharaj={editMaharaj}
@@ -84,7 +86,6 @@ function MaharajList() {
               <td>{m.city}</td>
               <td>{m.title}</td>
               <td>{m.contactInfo}</td>
-              {/* Date ko behtar format me dikhane ke liye */}
               <td>{new Date(m.date).toLocaleDateString()}</td>
               <td>
                 <button onClick={() => handleEditClick(m)}>Edit</button>
